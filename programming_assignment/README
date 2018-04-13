@@ -1,0 +1,53 @@
+README.
+Personnumer used: 198804307752
+
+Team Members: 
+1. Oleksii Prikhodko
+2. Ruslan Masinjila
+
+-------------------------------------
+Decrypting CBC with simple XOR:
+-------------------------------------
+
+The general approach employed in the decryption of the message involved using the known first 12-byte block representing the 12-digit number (198804307752), 
+as well as the first (IV), and the second (c0) blocks of the encrypted message in order to recover the key via the XOR function.
+With the help of this key, the entire ciphertext was then decrypted using the XOR function on consecutive 12-byte blocks along the entire length of the ciphertext.
+The two steps are described in more detail below:
+
+KEY RECOVERY
+------------
+
+Let the plainText be of the form: m0-m1-m2-m3-...-mn where mi is a 12-byte block for i=1,2,3,...,n
+
+The corresponding ciphertext is of the form: IV-c0-c1-c2-c3-...-cn where IV and ci are 12-byte blocks for i=1,2,3...,n
+
+But we know m0 (198804307752)
+
+Therefore, from the formula ci = k + (mi + c(i-1)) we get k = ci + (mi + c(i-1))
+
+When i=0, C(i-1) = IV
+
+Hence K = C0 + (m0 + IV). This means the Key can be recovered by applying the XOR function on the known first block (m0), the Initialization Vector (IV), and the first block of the ciphertext (c0). Because IV comes before c0 in the ciphertext, IV and c0 are actually the first and second blocks of the encrypted message respectivelly.
+
+
+DECRYPTION
+----------
+
+Since ci = k + (mi + c(i-1)). It follows that: mi = (k + ci) + c(i-1).
+
+Thus, knowing the Key k, every block of the encrypted message can be decrypted iteratively along the entire length of the message using two consecutive ciphetext blocks and the known key.
+
+--------------------------------------
+A Math Library for Cryptography:
+-------------------------------------- 
+
+1. Extended Euclidean Algorithm was implemented by simply transforming the pseudo-code in the provided link into java code. However, a special case that takes into account when the two inputs, a and b, are equal since without this special case the test program fails for input 5,5. The special case simply states that gcd = a*1 + b*0 resultin in gcd = a = b. 
+
+2. EulerPhi was calculated by counting the number of numbers, from 1 to n-1 inclusive, whose gcd with n is 1. Counting was done by incrementing a counter everytime gcd equaled 1. The Extended Euclidean Algorithm was used to compute the gcd.
+
+3. To find the Modular Inverse, the first step was to calculate the modulo of n mod m. However, this initially failed for negative n. To fix this,
+n mod m was modified into (n mod m + m) mod m. The next step was to use brute force to iteratively search for a number i, from 1 to m-1, which, when multiplied with the remainder of integer division n to m, then devided by m, the remainder would be 1. 
+
+4. Fermat Primlity Test was achieved with the help of modulr expontiation function described here: https://en.wikipedia.org/wiki/Modular_exponentiation 
+
+5. Collision hash function was found by subtracting the probability that all values in the sample are unique from 1.

@@ -1,0 +1,178 @@
+
+--------------------------------------------
+Name: Ruslan Masinjila
+Personnummer: 198804307752
+Home assignment 3, Cryptography
+--------------------------------------------
+
+-----------------------------------------------------------------------
+
+Part (A): Decentralised Voting Protocol
+--------
+>>Question 0
+My birthday is: 19880430
+
+
+>>Question 1
+List of choices = [-1,1] where -1 is for the Christmas Concert and 1 is for Christmas Market
+
+Given Polynomials:
+
+m1(x) = v1 - Y1x + M1x^2
+m2(x) = v2 - Y2x + M2x^2
+m3(x) = v3 - Y3x + D1x^2
+m4(x) = v4 - Y4x + D2x^2
+
+
+m1 chooses: 1
+Polynomials for m1
+
+To A1: m1(1) = 1 - 1*1 + 0*1^2 = 0
+To A2: m1(2) = 1 - 1*2 + 0*2^2 = -1
+To A3: m1(3) = 1 - 1*3 + 0*3^2 = -2
+
+m2 chooses: 1
+Polynomials for m2
+
+To A1: m2(1) = 1 - 9*1 + 4*1^2 = -4
+To A2: m2(2) = 1 - 9*2 + 4*2^2 = -1
+To A3: m2(3) = 1 - 9*3 + 4*3^2 = 10
+
+m3 chooses: 1
+Polynomials for m2
+
+To A1: m3(1) = 1 - 8*1 + 3*1^2 = -4
+To A2: m3(2) = 1 - 8*2 + 3*2^2 = -3
+To A3: m3(3) = 1 - 8*3 + 3*3^2 = 4
+
+m4 chooses: 1
+Polynomials for m2
+
+To A1: m4(1) = 1 - 8*1 + 0*1^2 = -7
+To A2: m4(2) = 1 - 8*2 + 0*2^2 = -15
+To A3: m4(3) = 1 - 8*3 + 0*3^2 = -23
+
+
+>>Question 2
+
+Each Auditor, Aj, receives 4 messages, one from each of the members m1, m2, m3 and m4. The sum of messages received by Auditor Aj:
+
+sum_Aj=m1(j)+m2(j)+m3(j)+m4(j)
+
+Therefore:
+Sum for A1  = m1(1)+m2(1)+m3(1)+m4(1) = (0)+(-4)+(-4)+(-7) = -15
+Sum for A2  = m1(2)+m2(2)+m3(2)+m4(2) = (-1)+(-1)+(-3)+(-15) = -20
+Sum for A3  = m1(3)+m2(3)+m3(3)+m4(3) = (-2)+(10)+(4)+(-23) = -11
+
+
+>>Question 3
+
+In order to reconstruct the secret, the members can use the three [A(j), Sum_Aj] pairs to calculate 2-degree polynomial.
+The constant term in the polnomial is the secret.
+
+Let [x1,y1] =  [1, -15]
+Let [x2,y2] =  [2, -20]
+Let [x3,y3] =  [3, -11]
+
+Lagrange's basis polynomial is given by:
+
+
+-15*(-x + 2)*(-x/2 + 3/2) - 20*(-x + 3)*(x - 1) - 11*(x/2 - 1/2)*(x - 2)
+
+
+Which expands into:
+
+
+   2           
+7⋅x  - 26⋅x + 4
+
+
+>>Question 4
+
+m1 can make sure that the result is always positive by sending a value, v1, greater than or equal to the number of members
+
+
+>>Question 5
+m1 could be prevented from cheating by deviding his/her value by the absolute value of the magnitude of the value so that it becomes either a 1 or -1
+
+
+
+Part B: Cryptographic Protocols
+
+
+Task 1
+
+
+Question 1a
+
+Suppose the following exchange takes place between A and B
+
+1. A -> B: {A, {M}eb}eb
+2. B -> A: {M}ea
+
+If adversary C can intercept the acknowledgement from B to A (i.e., communication #2), then C can relay the tampered with message to A as follows:
+3a. C -> A: {C, {M}ea}ea
+
+As a consequence, A would send another acknowledgement back to C as follows:
+4a. A -> C: {M}ec
+
+Finally, adversary C can then decrypt the message using its own private key
+
+
+
+
+Question 1b
+
+If adversary C intercepts the message from A to B instead (i.e., communication #1), C can relay the tampered with message to B as follows:
+3b. C -> B: {C, {A, {M}eb}eb}eb 
+
+B would send an acknowledgement to adversary C as follows:
+4b. B -> C: {A, {M}eb}ec
+
+At this point, adversary C decrypts the message once, using its own private key to get the following:
+{A,{M}eb}
+
+Now adversary C can change the sender's ID part from A to C because the unencrypted ID can be modified or completely removed from the rest of the message.
+The resulting message is as follows:
+{C,{M}eb}
+
+Adversary C then encrypts the message using B's public key, and send it to B as follows:
+5b. C -> B: {C,{M}eb}eb
+
+B sends acknowledgement back to C
+5c. B -> C: {M}ec
+
+Now Adversary C can decrypt the message again using its private key to reveal the message.
+
+
+Task 2
+
+
+Question 2
+
+
+Suppose A and C establish a connection, since C is a legitimate user despite having adverserial intentions.
+A then sends the first message to C as follows:
+A -> C: {A,nA}ec
+
+C then decryptes the message with its own key, establishes connection with B, and forwards the message to B using B's public key as follows:
+C -> B: {A, nA}eb
+
+B will now decrypt the message, add a random nounce, nB, and send the message to A using A's public key because the sender's ID in the message is A
+B -> A: {nA,nB}ea
+
+A checks its nouce and verifies that it is the same as sent earlier, but, instead of sending acknowledgement to B,
+A sends it to C because of the connection with C established earlier.
+A -> C: {nB}ec
+
+C then decrypts the message using its own key to recover B's nounce
+
+But B is still waiting for acknowledgement from A. So C encrypt's B's nounce and sends it to B as follows
+C -> B: {nB}eB
+
+B of course will decrypt and verify the nounce, but the problem now is C has achieved authentication with A, while B thinks it is talking with A
+
+
+------------------------------------- END OF ASSIGNMENT 3 ------------------------------------- 
+
+

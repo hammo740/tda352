@@ -1,0 +1,139 @@
+Name: Ruslan Masinjila
+Personal ID: 198804307752
+Email: ruslanm@student.chalmers.se
+
+TDA352 Assignment 1.
+
+---------------------------------------------------------------
+
+Given: Block Sequence := < b1,b2,b3,b4,b5,b6,b7,b8 > where bi is 8-bits long (1 byte).
+
+---------------------------------------------------------------
+
+Question 1: Probability that a randomly generated block is of Type 0 is the 
+            the probability that b8 is Decimal(0)=Binary(00000000).
+            Since an 8 bits can produce up to (2)^8 = 256 unique numbers,
+            it follows that:
+
+            P(Binary(00000000)) = 1/256 = 0.00390625.
+                                          -----------
+
+---------------------------------------------------------------
+
+Question 2: Probability that a valid block is valid is the probability
+            that a block is of type0 OR type1 OR type2 ... OR ... type7.
+
+            Mathematically: P(valid)=P(typ0)+P(type1)+...+...P(type7)
+            
+            Where:  P(type0) = 1/256
+                    P(type1) = 1/256 * 1/256 = (1/256)^2
+                    P(type2) = 1/256 * 1/256 * 1/256 = (1/256)^3
+                    .
+                    .
+                    .
+                    P(type7)=(1/256)^8
+
+            Therefore: P(valid) = sum(1/256)^i from i=1 to i=8
+
+                                = 0.00392157.
+                                  -----------            
+---------------------------------------------------------------
+
+Question 3: P(type0/valid) = P(type0 INTERSECTION valid)/P(valid).
+
+            But type0 is a subset of valid, therefore type0 fully
+            INTERSECTS with valid. This implies:
+            
+            P(type0 INTESECTION valid) = P (type0) = 0.00390625 ---> (From Question 1)
+
+            Therefore;  P(type0/valid) = 0.00390625/0.00392157
+
+                                       = 0.99609340
+                                         ----------
+---------------------------------------------------------------
+
+Question 4: - Before modification of messages:
+
+                The Ciphertext block C is given by: C = E(P + C') ---> (4.1)
+                The plaintext block P is given by:  P = C' + D(C) ---> (4.2)
+
+            - After modification of messages:
+        
+                From the new message (R+C')||C, it follows that:
+
+                    C(modified)  = C
+                    C'(modified) = Ri + C'
+
+                Therefore, modified equation (4.2) now becomes:
+    
+                    P(modified) = Ri + C' + D(C)
+
+                But D(C) = D(E(P + C') ) = P + C'
+
+                =>  P(modified) = Ri + C' + P + C'
+
+                                = Ri + P
+                                  ------
+----------------------------------------------------------------
+
+Question 5: If the last byte of P + Ri is 0, then
+            the last byte of P is the same as the last byte of Ri.
+
+            That is:
+                    P(8) + i = 0
+
+                =>  P(8) = i  
+                    --------
+----------------------------------------------------------------
+
+Question 6: To increase the time it takes to recompute MAC, the modified message
+            (Ri + C')||C can be pre-concatenated by arbitrary data in order
+            to make it longer. The data could be a long sequence of random,
+            64-bit blocks (i.e 8-byte blocks). If we call such sequence 
+            blocks FMES, then the modified string would look as follows:
+             
+
+            FMES || ( Ri + C' ) || C
+            ------------------------
+
+            Decryption of the above modified message using CBC 
+            will produce the modified pad block message (Ri + P) along with
+            arbitrary blocks of fake messages.
+
+----------------------------------------------------------------
+
+Question 7: Let P = <?,?,?,?,?,?,b7,b8> where b8 is known.
+
+            We are also given Si as follows:
+
+            Si = <s1,s2,s3,s4,s5,s6,i,b8+1> and the modified message as (Si + C') || C
+
+            => P (modified) = Si + P   (As shown in Question 4).
+
+            Since b8 + b8 + 1 = 1, it follows that the pad block has the form
+
+            <?,?,?,?,?,?,1,1>
+
+            Hence b7 + i = 1
+
+            Or    b7 = i + 1
+                  ---------- 
+
+----------------------------------------------------------------
+
+Question 8: Let P = <?,?,?,?,?,b6,b7,b8> where b7 and b8 are already known.
+            
+            Let Ti be <t1,t2,t3,t4,t5,i,b7+2,b8+2> and set modified message to (Ti + C')||C
+
+            => P(modified) = Ti + P   (As in Questions 4 and 7)
+
+            Since b8 + b8 + 2 = b7 + b7 + 2 = 2, it follows that the pad block has the form
+
+            <?,?,?,?,?,2,2,2>
+
+            Hence b6 + i =2
+
+            Or    b6 = i + 2
+                 ------------
+
+----------------------------------------------------------------
